@@ -9,6 +9,7 @@ import {
 } from 'firebase/auth'
 import {setDoc, doc, serverTimestamp} from 'firebase/firestore'
 import { db } from '../firebase.config'
+import { toast } from 'react-toastify'
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false)
@@ -54,7 +55,7 @@ function Signup() {
       navigate('/')
 
     } catch (error) {
-      console.log(error)
+      toast.error('Error registrating. Please try later.')
     }
   }
 
