@@ -5,6 +5,7 @@ import PrivateRoute from './components/PrivateRoute'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Explore from './pages/Explore'
+import Category from './pages/Category'
 import ForgotPassword from './pages/ForgotPassword'
 import Offers from './pages/Offers'
 import Profile from './pages/Profile'
@@ -20,6 +21,7 @@ function App() {
           <Route path='/' element={< Explore />} />
           <Route path='/forgot-password' element={< ForgotPassword />} />
           <Route path='/offers' element={< Offers />} />
+          <Route path='/category/:categoryName' element={< Category />} />
           <Route path='/profile' element={< PrivateRoute />}>
             <Route path='/profile' element={< Profile />} />
           </Route>
