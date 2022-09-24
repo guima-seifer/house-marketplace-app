@@ -17,7 +17,7 @@ import ListingItem from '../components/ListingItem'
 
 function Category() {
   const [listings, setListings] = useState(null)
-  const [loading, setLoading] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   const params = useParams()
 
@@ -26,7 +26,6 @@ function Category() {
       try {
         //get reference
         const listingsRef = collection(db, 'listings')
-        console.log(listingsRef)
 
         //create query - categoryName was set on url in app.js, rent or sell
         const q = query(

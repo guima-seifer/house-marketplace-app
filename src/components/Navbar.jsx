@@ -28,7 +28,8 @@ function Navbar() {
             />
             <p
               className={pathMatchRoute('/') ? 'navbarListItemNameActive' : ''}
-              >Explore
+            >
+              Explore
             </p>
           </li>
           <li
@@ -44,7 +45,8 @@ function Navbar() {
             />
             <p
               className={pathMatchRoute('/') ? 'navbarListItemNameActive' : ''}
-              >Offer
+            >
+              Offers
             </p>
           </li>
           <li
@@ -60,7 +62,8 @@ function Navbar() {
             />
             <p
               className={pathMatchRoute('/') ? 'navbarListItemNameActive' : ''}
-              >Profile
+            >
+              Profile
             </p>
           </li>
         </ul>

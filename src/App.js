@@ -2,7 +2,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import PrivateRoute from './components/PrivateRoute'
-import { ToastContainer, toast } from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Explore from './pages/Explore'
 import Category from './pages/Category'
@@ -11,6 +11,8 @@ import Offers from './pages/Offers'
 import Profile from './pages/Profile'
 import Signin from './pages/Signin'
 import Signup from './pages/Signup'
+import CreateListing from './pages/CreateListing'
+
 
 
 function App() {
@@ -28,9 +30,9 @@ function App() {
           <Route path='/profile' element={< Profile />} />
           <Route path='/sign-in' element={< Signin />} />
           <Route path='/sign-up' element={< Signup />} />
+          <Route path='/create-listing' element={< CreateListing />} />
         </Routes>
         < Navbar />
-              {/* Navbar */}
       </Router>
       <ToastContainer />
     </>
