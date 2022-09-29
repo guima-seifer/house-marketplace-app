@@ -12,6 +12,7 @@ import Profile from './pages/Profile'
 import Signin from './pages/Signin'
 import Signup from './pages/Signup'
 import CreateListing from './pages/CreateListing'
+import Listing from './pages/Listing'
 
 
 
@@ -31,6 +32,7 @@ function App() {
           <Route path='/sign-in' element={< Signin />} />
           <Route path='/sign-up' element={< Signup />} />
           <Route path='/create-listing' element={< CreateListing />} />
+          <Route path='/category/:categoryName/:listingId' element={< Listing />} />
         </Routes>
         < Navbar />
       </Router>

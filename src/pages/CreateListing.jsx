@@ -83,7 +83,6 @@ function CreateListing() {
       setLoading(false)
       toast.error('Max 6 images')
     }
-
     let geoLocation = {}
     let location
 
@@ -101,6 +100,8 @@ function CreateListing() {
           ? undefined
           : data.results[0]?.formatted_address
 
+      console.log(location)
+
       if (location === undefined || location.includes('undefined')) {
         setLoading(false)
         toast.error('Please enter a correct address')
@@ -109,16 +110,17 @@ function CreateListing() {
     } else {
       geoLocation.lat = latitude
       geoLocation.lng = longitude
-      location = address
     }
 
     //Store images in firebase
     const storeImage = async (image) => {
-
+      console.log(image);
       return new Promise((resolve, reject) => {
         const storage = getStorage()
         const fileName = `${auth.currentUser.uid}-${image.name}-{uuidv4()}`
-        const storageRef = ref(storage, 'images/' + fileName)
+
+        const storageRef = ref(storage, 'image/' + fileName)
+        console.log('storageRef: ' + storageRef)
         const uploadTask = uploadBytesResumable(storageRef, image)
 
         // Listen for state changes, errors, and completion of the upload.
@@ -129,7 +131,6 @@ function CreateListing() {
             const progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100
             console.log('Upload is ' + progress + '% done')
-            // eslint-disable-next-line default-case
             switch (snapshot.state) {
               case 'paused':
                 console.log('Upload is paused')
@@ -137,12 +138,14 @@ function CreateListing() {
               case 'running':
                 console.log('Upload is running')
                 break
+              default:
+                break
             }
           },
           (error) => {
             // A full list of error codes is available at
             // https://firebase.google.com/docs/storage/web/handle-errors
-            console.log(error);
+            console.log(error)
             reject(error)
           },
           () => {
@@ -155,20 +158,22 @@ function CreateListing() {
         )
       })
     }
-/* 
+
     const imgUrls = await Promise.all(
-    [...images].map((image) => storeImage(image))
+      [...images].map((image) => storeImage(image))
     ).catch(() => {
       setLoading(false)
       toast.error('Failed to upload image.')
       return
     })
 
+    console.log(imgUrls);
+
     const formDataCopy = {
       ...formData,
       imgUrls,
       geoLocation,
-      timestamp: serverTimestamp()
+      timestamp: serverTimestamp(),
     }
 
     formDataCopy.location = address
@@ -177,10 +182,9 @@ function CreateListing() {
     !formDataCopy.offer && delete formDataCopy.discountedPrice
 
     const docRef = await addDoc(collection(db, 'listings'), formDataCopy)
- */    setLoading(false)
+    setLoading(false)
     toast.success('Listing created')
-/*     navigate(`/category/${formDataCopy.type}/${docRef.id}`)
- */
+    navigate(`/category/${formDataCopy.type}/${docRef.id}`)
   }
 
   const onMutate = (e) => {
@@ -453,7 +457,7 @@ function CreateListing() {
             id='images'
             onChange={onMutate}
             max='6'
-            accept='.jpg, .png, .jpeg'
+            accept='.JPG, .jpg, .png, .jpeg'
             multiple
             required
           />
