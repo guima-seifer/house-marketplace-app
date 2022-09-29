@@ -117,7 +117,7 @@ function CreateListing() {
       console.log(image);
       return new Promise((resolve, reject) => {
         const storage = getStorage()
-        const fileName = `${auth.currentUser.uid}-${image.name}-{uuidv4()}`
+        const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`
 
         const storageRef = ref(storage, 'image/' + fileName)
         console.log('storageRef: ' + storageRef)
