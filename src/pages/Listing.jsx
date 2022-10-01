@@ -46,13 +46,10 @@ function Listing() {
   return (
     <main>
       <Swiper
+        className='swiper-container'
         modules={[Navigation, Pagination, Scrollbar, A11y]}
-        spaceBetween={50}
         slidesPerView={1}
-        navigation
         pagination={{ clickable: true }}
-        onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log('slide change')}
       >
         {listing.imgUrls.map((url, index) => (
           <SwiperSlide key={index}>
@@ -62,11 +59,8 @@ function Listing() {
                 background: `url(${listing.imgUrls[index]})
                  center no-repeat`,
                 backgroundSize: 'cover',
-                height: '25rem',
-                
               }}
-            >
-            </div>
+            ></div>
           </SwiperSlide>
         ))}
         {/*  <SwiperSlide key={index}>
