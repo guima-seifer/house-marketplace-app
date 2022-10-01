@@ -1,10 +1,19 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { MapContainer, TileLayer, useMap, Marker, Popup } from 'react-leaflet'
 import { getDoc, doc } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 import { db } from '../firebase.config'
 import Spinner from '../components/Spinner'
 import shareIcon from '../assets/svg/shareIcon.svg'
+
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper'
+import { Swiper, SwiperSlide } from 'swiper/react'
+// Import Swiper styles
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
+import 'swiper/css/scrollbar'
 
 function Listing() {
   const [listing, setListing] = useState(null)
@@ -14,7 +23,6 @@ function Listing() {
   const navigate = useNavigate()
   const params = useParams()
   const auth = getAuth()
-  
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -28,15 +36,50 @@ function Listing() {
       }
     }
     fetchListing()
-}, [navigate, params.listingId])
+  }, [navigate, params.listingId])
 
   if (loading) {
-   return <Spinner />
+    return <Spinner />
   }
+  console.log(listing.imgUrls)
 
   return (
     <main>
-      {/* SLIDER */}
+      <Swiper
+        modules={[Navigation, Pagination, Scrollbar, A11y]}
+        spaceBetween={50}
+        slidesPerView={1}
+        navigation
+        pagination={{ clickable: true }}
+        onSwiper={(swiper) => console.log(swiper)}
+        onSlideChange={() => console.log('slide change')}
+      >
+        {listing.imgUrls.map((url, index) => (
+          <SwiperSlide key={index}>
+            <div
+              className='swiperSlideDiv'
+              style={{
+                background: `url(${listing.imgUrls[index]})
+                 center no-repeat`,
+                backgroundSize: 'cover',
+                height: '25rem',
+                
+              }}
+            >
+            </div>
+          </SwiperSlide>
+        ))}
+        {/*  <SwiperSlide key={index}>
+            <div
+              style={{
+                background: `url(${listing.imgUrls[index]})
+                 center no-repeat`,
+                backgroundSize: 'cover',
+              }}
+              className='swiperSlideDiv'
+            ></div>
+          </SwiperSlide> */}
+      </Swiper>
 
       <div
         className='shareIconDiv'
@@ -50,7 +93,6 @@ function Listing() {
       >
         <img src={shareIcon} alt='' />
       </div>
-
 
       {shareLinkCopied && <p className='linkCopied'>Link Copied!</p>}
 
@@ -73,22 +115,51 @@ function Listing() {
             ${listing.regularPrice - listing.discountedPrice}
           </p>
         )}
-        <ul className="listingDetailsList">
-            <li>{listing.bedrooms > 1 ? `${listing.bedrooms} Bedrooms` : '1 Bedroom'}</li>
-            <li>{listing.bathrooms > 1 ? `${listing.bathrooms} Bathrooms` : '1 Bathroom'}</li>
-            <li>{listing.parking && 'Parking Spot'}</li>
-            <li>{listing.furnished && 'Furnished'}</li>
+        <ul className='listingDetailsList'>
+          <li>
+            {listing.bedrooms > 1
+              ? `${listing.bedrooms} Bedrooms`
+              : '1 Bedroom'}
+          </li>
+          <li>
+            {listing.bathrooms > 1
+              ? `${listing.bathrooms} Bathrooms`
+              : '1 Bathroom'}
+          </li>
+          <li>{listing.parking && 'Parking Spot'}</li>
+          <li>{listing.furnished && 'Furnished'}</li>
         </ul>
 
         <p className='listingLocationTitle'>Location</p>
 
-            {/* MAP */}
+        <div className='leafletContainer'>
+          <MapContainer
+            style={{ height: '100%', width: '100%' }}
+            center={[listing.geoLocation.lat, listing.geoLocation.lng]}
+            scrollWheelZoom={false}
+            zoom={13}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+            />
 
-            {auth.currentUser?.uid !== listing.userRef && (
-                <Link to={`/contact/${listing.userRef}?listingName=${listing.name}`} className="primaryButton">
-                Contact Landlord
-            </Link>
-            )}
+            <Marker
+              position={[listing.geoLocation.lat, listing.geoLocation.lng]}
+            >
+              <Popup>{listing.location}</Popup>
+            </Marker>
+          </MapContainer>
+        </div>
+
+        {auth.currentUser?.uid !== listing.userRef && (
+          <Link
+            to={`/contact/${listing.userRef}?listingName=${listing.name}`}
+            className='primaryButton'
+          >
+            Contact Landlord
+          </Link>
+        )}
       </div>
     </main>
   )
