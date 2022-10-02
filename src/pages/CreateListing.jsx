@@ -15,6 +15,7 @@ import { db } from '../firebase.config'
 
 function CreateListing() {
   const [loading, setLoading] = useState(false)
+  //eslint-disable-next-line react-hooks/exhaustive-deps
   const [geoLocationEnabled, setGeoLocationEnabled] = useState(false)
   const [formData, setFormData] = useState({
     type: 'rent',
@@ -52,6 +53,7 @@ function CreateListing() {
   const navigate = useNavigate()
   const isMounted = useRef(true)
 
+  //sets userRef
   useEffect(() => {
     if (isMounted) {
       onAuthStateChanged(auth, (user) => {
@@ -181,6 +183,7 @@ function CreateListing() {
     delete formDataCopy.address
     !formDataCopy.offer && delete formDataCopy.discountedPrice
 
+    //create listing
     const docRef = await addDoc(collection(db, 'listings'), formDataCopy)
     setLoading(false)
     toast.success('Listing created')
