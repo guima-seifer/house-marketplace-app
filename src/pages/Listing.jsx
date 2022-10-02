@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { MapContainer, TileLayer, useMap, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import { getDoc, doc } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 import { db } from '../firebase.config'
@@ -40,12 +40,12 @@ function Listing() {
 
   if (loading) {
     return <Spinner />
-  }
-  console.log(listing.imgUrls)
-
-  return (
-    <main>
-      <Swiper
+  } 
+  console.log(listing.imgUrls)  
+  
+  return (  
+    <main>  
+      <Swiper 
         className='swiper-container'
         modules={[Navigation, Pagination, Scrollbar, A11y]}
         slidesPerView={1}

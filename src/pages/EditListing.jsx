@@ -1,20 +1,21 @@
 import { useState, useRef, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { doc, updateDoc, getDoc, serverTimestamp } from 'firebase/firestore'
 import {
   getStorage,
   ref,
   uploadBytesResumable,
   getDownloadURL,
 } from 'firebase/storage'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 import Spinner from '../components/Spinner'
 import { db } from '../firebase.config'
 
-function CreateListing() {
+function EditListing() {
   const [loading, setLoading] = useState(false)
+  const [listing, setListing] = useState(null)
   // eslint-disable-next-line no-unused-vars
   const [geoLocationEnabled, setGeoLocationEnabled] = useState(false)
   const [formData, setFormData] = useState({
@@ -51,9 +52,36 @@ function CreateListing() {
 
   const auth = getAuth()
   const navigate = useNavigate()
+  const params = useParams()
   const isMounted = useRef(true)
 
-  //sets userRef
+  //Redirect  if listing is not owned by user
+  useEffect(() => {
+    if (listing && listing.userRef !== auth.currentUser.uid) {
+      toast.error('You can not edit this!')
+      navigate('/')
+    }
+  })
+
+  //Fetch listing to edit
+  useEffect(() => {
+    setLoading(true)
+    const fetchListing = async () => {
+      const docRef = doc(db, 'listings', params.listingId)
+      const docSnap = await getDoc(docRef)
+      if (docSnap.exists()) {
+        setListing(docSnap.data())
+        setFormData({ ...docSnap.data(), address: docSnap.data().location })
+        setLoading(false)
+      } else {
+        navigate('/')
+        toast.error('Listing doesn´t compute')
+      }
+    }
+    fetchListing()
+  }, [params.listingId, navigate])
+
+  //Sets userRef
   useEffect(() => {
     if (isMounted) {
       onAuthStateChanged(auth, (user) => {
@@ -116,7 +144,7 @@ function CreateListing() {
 
     //Store images in firebase
     const storeImage = async (image) => {
-      console.log(image);
+      console.log(image)
       return new Promise((resolve, reject) => {
         const storage = getStorage()
         const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`
@@ -169,7 +197,7 @@ function CreateListing() {
       return
     })
 
-    console.log(imgUrls);
+    console.log(imgUrls)
 
     const formDataCopy = {
       ...formData,
@@ -183,10 +211,11 @@ function CreateListing() {
     delete formDataCopy.address
     !formDataCopy.offer && delete formDataCopy.discountedPrice
 
-    //create listing
-    const docRef = await addDoc(collection(db, 'listings'), formDataCopy)
+    //update listing
+    const docRef = doc(db, 'listings', params.listingId)
+    await updateDoc(docRef, formDataCopy)
     setLoading(false)
-    toast.success('Listing created')
+    toast.success('Listing edited')
     navigate(`/category/${formDataCopy.type}/${docRef.id}`)
   }
 
@@ -223,7 +252,7 @@ function CreateListing() {
   return (
     <div className='profile'>
       <header>
-        <p className='pageHeader'>Create a Listing</p>
+        <p className='pageHeader'>Edit Listing</p>
       </header>
       <main>
         <form action='' onSubmit={onSubmit}>
@@ -465,7 +494,7 @@ function CreateListing() {
             required
           />
           <button className='primaryButton createListingButton' type='submit'>
-            Create Listing
+            Edit Listing
           </button>
         </form>
       </main>
@@ -473,4 +502,4 @@ function CreateListing() {
   )
 }
 
-export default CreateListing
+export default EditListing
